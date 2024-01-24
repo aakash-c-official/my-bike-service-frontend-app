@@ -21,6 +21,7 @@ const pages = [
   { page: "Sign In", link: "/signin" },
   { page: "Sign Up", link: "/signup" },
   { page: "Dashboard", link: "/dashboard" },
+  { page: "Book Service", link: "/slotform" },
   // 'Products', 'Pricing', 'Blog'
 ];
 const settings = [
