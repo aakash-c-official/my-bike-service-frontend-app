@@ -3,44 +3,27 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-// import FormControlLabel from "@mui/material/FormControlLabel";
-// import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
+
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
-import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import { FormControl, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
-// TODO remove, this demo shouldn't need to reset the theme.
+const roles=['Client','Admin','Service Owner']
+
 
 const defaultTheme = createTheme();
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [signinData, setSigninData] = React.useState({
+    role:'',
     email: "",
     password: "",
   });
@@ -59,7 +42,7 @@ export default function SignIn() {
     if (res.user) {
       localStorage.setItem("token", res.user);
       alert("login success");
-      navigate("/adminpage");
+      navigate("/slotform");
     } else alert("please check your login credentials");
   }
 
@@ -68,9 +51,11 @@ export default function SignIn() {
     const data = new FormData(event.currentTarget);
     loginUser(data);
     console.log({
+      role:data.get('role'),
       email: data.get("email"),
       password: data.get("password"),
     });
+    
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -98,9 +83,27 @@ export default function SignIn() {
           <Box
             component="form"
             onSubmit={handleSubmit}
-            noValidate
+      
             sx={{ mt: 1 }}
           >
+              <FormControl fullWidth sx={{ width: '50%',mt:3 }}>
+            <InputLabel id="roles-label">Select Role</InputLabel>
+            <Select
+              labelId="roles-label"
+              id="roles-select"
+              name="role"
+              value={signinData.role}
+              label="Select Role"
+              onChange={handleChange}
+              required
+            >
+              {roles.map((role,id) => (
+                <MenuItem key={id} value={role}>
+                  {role}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
             <TextField
               onChange={handleChange}
               margin="normal"
@@ -148,33 +151,27 @@ export default function SignIn() {
           />
         </FormControl>
 
-            {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
+        
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2,width:100 }}
             >
               Sign In
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
+                
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link to="/signup" >
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </ThemeProvider>
   );

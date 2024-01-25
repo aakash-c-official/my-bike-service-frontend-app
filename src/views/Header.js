@@ -22,6 +22,7 @@ const pages = [
   { page: "Sign Up", link: "/signup" },
   { page: "Dashboard", link: "/dashboard" },
   { page: "Book Service", link: "/slotform" },
+  { page: "Add Service Center", link: "/AddCenterForm" },
   // 'Products', 'Pricing', 'Blog'
 ];
 const settings = [
@@ -49,6 +50,13 @@ function Header() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userData'); 
+    navigate('/signin')
+  
   };
 
   return (
@@ -152,6 +160,7 @@ function Header() {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
+            <Button sx={{  color: "white" }} onClick={handleLogout}>Logout</Button>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />

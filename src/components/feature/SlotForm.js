@@ -1,23 +1,50 @@
-import React, { useState } from 'react';
-import { Container, Typography, Grid, FormControl, InputLabel, Select, MenuItem, Button, makeStyles } from '@mui/material';
-import Autocomplete from '@mui/material/Autocomplete';
-const serviceCenters = ['Center A', 'Center B', 'aCenter C']; // List of service centers
+import React, { useState } from "react";
+import {
+  Container,
+  Typography,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Button,
+} from "@mui/material";
 
-// const useStyles = makeStyles((theme) => ({
-//   formControl: {
-//     margin: theme.spacing(1),
-//     minWidth: 120,
-//   },
-//   button: {
-//     margin: theme.spacing(1),
-//   },
-// }));
+// Sample data
+const cities = [
+  { id: 1, name: "City 1" },
+  { id: 2, name: "City 2" },
+  // Add more cities as needed
+];
+
+const serviceCenters = {
+  1: [
+    { id: 1, name: "Center 1A" },
+    { id: 2, name: "Center 1B" },
+    // Add more centers for City 1
+  ],
+  2: [
+    { id: 3, name: "Center 2A" },
+    { id: 4, name: "Center 2B" },
+    // Add more centers for City 2
+  ],
+  // Add more cities with their respective centers
+};
+
+const slots = ["Morning", "Afternoon"];
+
+const services = ["Full Service", "Engine Service", "Wash"];
 
 function SlotForm() {
-//   const classes = useStyles();
-  const [selectedCenter, setSelectedCenter] = useState('');
-  const [selectedSlot, setSelectedSlot] = useState('');
-  const [selectedService, setSelectedService] = useState('');
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedCenter, setSelectedCenter] = useState("");
+  const [selectedSlot, setSelectedSlot] = useState("");
+  const [selectedService, setSelectedService] = useState("");
+
+  const handleCityChange = (event) => {
+    setSelectedCity(event.target.value);
+    setSelectedCenter("");
+  };
 
   const handleCenterChange = (event) => {
     setSelectedCenter(event.target.value);
@@ -31,90 +58,97 @@ function SlotForm() {
     setSelectedService(event.target.value);
   };
 
-  const handleSubmit = () => {
-    // Handle form submission
-    console.log(`Selected Center: ${selectedCenter}, Selected Slot: ${selectedSlot}, Selected Service: ${selectedService}`);
-  };
-
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
         Bike Servicing Website
       </Typography>
-      <Grid container spacing={3}>
-      <Grid item xs={12}>
-          <Autocomplete
-            value={selectedCenter}
-            onChange={handleCenterChange}
-            options={serviceCenters}
-            renderInput={(params) => (
-              <FormControl >
-                <InputLabel id="center-select-label">Select Service Center</InputLabel>
-                <Select
-                  labelId="center-select-label"
-                  label="Select Service Center"
-                  {...params}
-                >
-                  {serviceCenters.map((center, index) => (
-                    <MenuItem key={index} value={center}>{center}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
-          />
-        </Grid>
-
-
-        <Grid item xs={12}>
-          <FormControl className>
-            <InputLabel id="center-select-label">Select Service Center</InputLabel>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={4}>
+          <FormControl fullWidth>
+            <InputLabel id="city-label">Select City</InputLabel>
             <Select
-              labelId="center-select-label"
+              labelId="city-label"
+              id="city-select"
+              value={selectedCity}
+              label="Select City"
+              onChange={handleCityChange}
+            >
+              {cities.map((city) => (
+                <MenuItem key={city.id} value={city.id}>
+                  {city.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <FormControl fullWidth disabled={!selectedCity}>
+            <InputLabel id="center-label">Select Service Center</InputLabel>
+            <Select
+              labelId="center-label"
               id="center-select"
               value={selectedCenter}
               label="Select Service Center"
               onChange={handleCenterChange}
             >
-              {serviceCenters.map((center, index) => (
-                <MenuItem key={index} value={center}>{center}</MenuItem>
-              ))}
+              {selectedCity &&
+                serviceCenters[selectedCity].map((center) => (
+                  <MenuItem key={center.id} value={center.id}>
+                    {center.name}
+                  </MenuItem>
+                ))}
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12}>
-          <FormControl className>
-            <InputLabel id="slot-select-label">Select Slot</InputLabel>
+        <Grid item xs={12} sm={4}>
+          <FormControl fullWidth disabled={!selectedCenter}>
+            <InputLabel id="slot-label">Select Slot</InputLabel>
             <Select
-              labelId="slot-select-label"
+              labelId="slot-label"
               id="slot-select"
               value={selectedSlot}
               label="Select Slot"
               onChange={handleSlotChange}
             >
-              <MenuItem value="morning">Morning</MenuItem>
-              <MenuItem value="afternoon">Afternoon</MenuItem>
+              {slots.map((slot) => (
+                <MenuItem key={slot} value={slot}>
+                  {slot}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <FormControl className>
-            <InputLabel id="service-select-label">Select Service Type</InputLabel>
+          <FormControl fullWidth disabled={!selectedSlot}>
+            <InputLabel id="service-label">Select Service Type</InputLabel>
             <Select
-              labelId="service-select-label"
+              labelId="service-label"
               id="service-select"
               value={selectedService}
               label="Select Service Type"
               onChange={handleServiceChange}
             >
-              <MenuItem value="full-service">Full Service</MenuItem>
-              <MenuItem value="engine-service">Engine Service</MenuItem>
-              <MenuItem value="wash">Wash</MenuItem>
+              {services.map((service) => (
+                <MenuItem key={service} value={service}>
+                  {service}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <Button variant="contained" color="primary" className onClick={handleSubmit}>
-            Submit
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={!selectedService}
+            onClick={() =>
+              alert(
+                `Selected City: ${selectedCity}, Selected Center: ${selectedCenter}, Selected Slot: ${selectedSlot}, Selected Service: ${selectedService}`
+              )
+            }
+          >
+            Book Service
           </Button>
         </Grid>
       </Grid>
