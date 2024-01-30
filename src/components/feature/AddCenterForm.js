@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
@@ -10,7 +10,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import {
   FormControl,
   IconButton,
@@ -22,13 +22,30 @@ import axios from "axios";
 
 const defaultTheme = createTheme();
 function AddCenterForm() {
+  const {id}=useParams();
+  console.log(id);
    const [servicesList,setServicesList]=useState([]);
+   const [city,setCity]=useState("");
+   const [centerName,setCenterName]=useState('');
   const [formData, setFormData] = useState({
     city: "",
     centerName: "",
     
   });
-  const[redirect,setRedirect]=useState('')
+  const[redirect,setRedirect]=useState('');
+  useEffect(()=>{
+    if(!id){
+      return;
+    }
+    axios.get('/services/'+id).then(response=>{
+      const {data}=response;
+      console.log(data)
+      // setFormData()
+      setServicesList(data.services)
+      setCity(data.city);
+      setCenterName(data.center);
+    })
+  },[id])
  
   const citiesData = [
     { id: 1, name: "City 1" },
@@ -73,11 +90,19 @@ function AddCenterForm() {
 
   const handleSubmit =async (event) => {
     event.preventDefault();
-    // Here you can send formData to your backend or perform any other actions
-    console.log("Form submitted:", formData);
-    const payload={formData,servicesList}
-   const{data} =await axios.post('/addservice',payload);
-   setRedirect('/slotform')
+
+    // console.log("Form submitted:", formData);
+    const payload={city,centerName,servicesList}
+console.log(payload);
+    if(id){
+      const{data} =await axios.put('/editservice',{id,...payload});
+      setRedirect('/slotform')
+    }
+    else{
+        const{data} =await axios.post('/addservice',payload);
+        setRedirect('/slotform')
+    }
+ 
     // Reset form fields after submission
     // setFormData({ city: '', centerName: '' });
     // handleCenterAdded()
@@ -171,7 +196,9 @@ else{
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
-              onChange={handleInputChange}
+              // onChange={handleInputChange}
+              onChange={e=>setCity(e.target.value)}
+              value={city}
               margin="normal"
               required
               fullWidth
@@ -182,7 +209,9 @@ else{
               autoFocus
             />
             <TextField
-              onChange={handleInputChange}
+              // onChange={handleInputChange}
+              onChange={e=>setCenterName(e.target.value)}
+              value={centerName}
               margin="normal"
               required
               fullWidth
@@ -208,7 +237,7 @@ else{
             {/* <div className="grid gap-2 grid-cols-2 md:grid-cols-2 lg:grid-cols-6"> */}
               
               <label className="border p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-                <input type="checkbox" name="full-service" onChange={handleCbClick}/>
+                <input type="checkbox" checked={servicesList.includes('full-service')} name="full-service" onChange={handleCbClick}/>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -226,7 +255,7 @@ else{
                 <span>Full Service</span>
               </label>
               <label className="border p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-                <input type="checkbox" name="engine-service" onChange={handleCbClick}/>
+                <input type="checkbox" checked={servicesList.includes('engine-service')} name="engine-service" onChange={handleCbClick}/>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -244,7 +273,7 @@ else{
                 <span>Engine Service</span>
               </label>
               <label className="border p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-                <input type="checkbox" name="bike-wash" onChange={handleCbClick}/>
+                <input type="checkbox" checked={servicesList.includes('bike-wash')} name="bike-wash" onChange={handleCbClick}/>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"

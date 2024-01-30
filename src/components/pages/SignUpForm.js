@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import {
   Box,
   FormControl,
@@ -16,6 +16,7 @@ import axios from "axios";
 const roles = ["Client", "Admin", "Service Owner"];
 
 function SignUpForm() {
+  const [redirect,setRedirect]=useState(false);
   const [signupData, setSignupData] = useState({
     role: "",
     username: "",
@@ -49,6 +50,7 @@ function SignUpForm() {
       // axios.get('/test')
       alert("Registration successful")
       console.log("Signup data:", signupData);
+      setRedirect(true);
     }
     catch(err){
       alert("Registeration Failed")
@@ -60,6 +62,9 @@ function SignUpForm() {
     setSignupData({ ...signupData, [name]: value });
   };
 
+  if(redirect){
+    return <Navigate to={"/signin"}/>
+  }
   return (
     <>
       <Box

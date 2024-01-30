@@ -1,38 +1,49 @@
-import React from 'react'
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import React, { useEffect, useState } from "react";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import axios from "axios";
 const products = [
-    {
-      id: 1,
-      name: 'Bike Batteries',
-      href: '#',
-      imageSrc: 'https://www.apnamechanic.com/wp-content/uploads/2023/05/battery-1-1-1-1-1-1-1.png.webp',
-      imageAlt: "Front of men's Basic Tee in black.",
-      price: '$35',
-      color: 'Black',
-    },
-    {
-        id: 1,
-        name: 'Engine Repair',
-        href: '#',
-        imageSrc: 'https://www.apnamechanic.com/wp-content/uploads/2023/05/motorcycle-1-1-1-1-1-1-1-1.png.webp',
-        imageAlt: "Front of men's Basic Tee in black.",
-        price: '$35',
-        color: 'Black',
-      },
-    // More products...
-  ]
+  {
+    id: 1,
+    name: "Bike Batteries",
+    href: "#",
+    imageSrc:
+      "https://www.apnamechanic.com/wp-content/uploads/2023/05/battery-1-1-1-1-1-1-1.png.webp",
+    imageAlt: "Front of men's Basic Tee in black.",
+    price: "$35",
+    color: "Black",
+  },
+  {
+    id: 1,
+    name: "Engine Repair",
+    href: "#",
+    imageSrc:
+      "https://www.apnamechanic.com/wp-content/uploads/2023/05/motorcycle-1-1-1-1-1-1-1-1.png.webp",
+    imageAlt: "Front of men's Basic Tee in black.",
+    price: "$35",
+    color: "Black",
+  },
+  // More products...
+];
+
 const Home = () => {
-  const [age, setAge] = React.useState('');
+  const [age, setAge] = React.useState("");
+  const [services, setServices] = useState([]);
+  useEffect(() => {
+    axios.get("/allservicesforall").then((response) => {
+      setServices(response.data);
+    });
+  }, []);
 
   const handleChange = (event) => {
     setAge(event.target.value);
   };
+  console.log(services);
   return (
-    <>  
-     <div>
+    <>
+      {/* <div>
       <FormControl sx={{ m: 5, minWidth: 200 }}>
         <InputLabel id="demo-simple-select-autowidth-label">Select Center</InputLabel>
         <Select
@@ -82,10 +93,18 @@ const Home = () => {
         ))}
       </div>
     </div>
-  </div>
-  </>
+  </div> */}
+      <div>{services.length > 0 && services.map((service) =>( 
+      
+      <div className="bg-gray-200 p-4 rounded-2xl flex gap-4 cursor-pointer font-bold">{service.city}
+			<div>{service.center}</div>
+			{service.services.length > 0 && service.services.map((e)=> <div>{e}</div>)}
+			</div>
 
-  )
-}
+      ))}
+      </div>
+    </>
+  );
+};
 
-export default Home
+export default Home;

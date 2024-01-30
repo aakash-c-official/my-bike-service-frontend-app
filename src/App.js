@@ -28,6 +28,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/account/:subpage?" element={<Account />} />
             <Route path="/account/:subpage/:action" element={<Account />} />
+            <Route path="/account/services/:id" element={<AddCenterForm />} />
             <Route path="/slotform" element={<SlotForm />} />
             <Route path="/addcenterform" element={<AddCenterForm />} />
             //catch all page
