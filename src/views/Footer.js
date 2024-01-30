@@ -15,6 +15,7 @@ export default function Footer() {
         p: 6,
       }}
       component="footer"
+      
     >
       <Container maxWidth="sm">
         <Typography variant="body2" color="text.secondary" align="center">

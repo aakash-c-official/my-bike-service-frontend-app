@@ -14,6 +14,8 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../UserContext";
+import axios from "axios";
 
 // const pages = ['Products', 'Pricing', 'Blog'];
 const pages = [
@@ -29,10 +31,11 @@ const settings = [
   { page: "Profile", link: "/profile" },
   { page: "Account", link: "/account" },
   { page: "Dashboard", link: "/dashboard" },
-  { page: "Logout", link: "/" },       
-  ];
+  { page: "Logout", link: "/" },
+];
 
 function Header() {
+  const { user, setUser } = React.useContext(UserContext);
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -52,11 +55,12 @@ function Header() {
     setAnchorElUser(null);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userData'); 
-    navigate('/signin')
-  
+  const handleLogout = async () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userData");
+    await axios.post("/logout");
+    navigate("/signin");
+    setUser(null);
   };
 
   return (
@@ -66,10 +70,10 @@ function Header() {
           <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
             variant="h6"
-            style={{cursor:'pointer'}}
+            style={{ cursor: "pointer" }}
             noWrap
             component="a"
-            onClick={() => navigate("/")}
+            onClick={() => navigate(user ? "/" : "/signin")}
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -154,41 +158,55 @@ function Header() {
                 sx={{ my: 2, color: "white", display: "block" }}
               >
                 {page.page}
-                
               </Button>
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Button sx={{  color: "white" }} onClick={handleLogout}>Logout</Button>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={()=>{handleCloseUserMenu();navigate(setting.link)}}>
-                  <Typography textAlign="center">{setting.page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+          {!!user && (
+            <Box sx={{ flexGrow: 0 }}>
+              {!!user && (
+                <Button sx={{ color: "white" }} onClick={handleLogout}>
+                  Logout
+                </Button>
+              )}
+              {/* {!!user &&(
+              <div>{user.name}</div>
+            )} */}
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {settings.map((setting) => (
+                  <MenuItem
+                    key={setting}
+                    onClick={() => {
+                      handleCloseUserMenu();
+                      navigate(setting.link);
+                    }}
+                  >
+                    <Typography textAlign="center">{setting.page}</Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+          )}
         </Toolbar>
       </Container>
     </AppBar>
