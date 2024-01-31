@@ -11,6 +11,10 @@ export default function MyBooking(){
 {    (user.role!="Client") &&  <Link className="bg-blue-500 text-white py-2 px-6 rounded-full" to={'/addcenterform'}>Add new service center</Link>
 }            </div>
 
+<div>
+    
+</div>
+
         </div>
     )
 }       

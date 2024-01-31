@@ -55,9 +55,11 @@ export default function SignIn() {
     try{
 
       // const data = new FormData(event.currentTarget);
-      const {data}=await axios.post("/login",{signinData});
+      const response=await axios.post("/login",{signinData});
+     const {data}=response;
       setUser(data);
       console.log(signinData)
+      console.log(data)
       alert("Login successful")
       setRedirect(true)
       // loginUser(data);

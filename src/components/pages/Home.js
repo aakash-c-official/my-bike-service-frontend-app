@@ -4,6 +4,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import axios from "axios";
+import { Link } from "react-router-dom";
 const products = [
   {
     id: 1,
@@ -34,6 +35,7 @@ const Home = () => {
   useEffect(() => {
     axios.get("/allservicesforall").then((response) => {
       setServices(response.data);
+      
     });
   }, []);
 
@@ -94,15 +96,36 @@ const Home = () => {
       </div>
     </div>
   </div> */}
-      <div>{services.length > 0 && services.map((service) =>( 
+  <h2 className="text-2xl">All services page</h2>
+      {/* <div>{services.length > 0 && services.map((service) =>( 
       
-      <div className="bg-gray-200 p-4 rounded-2xl flex gap-4 cursor-pointer font-bold">{service.city}
+      <Link to={'/slotform/'+service._id} className="bg-gray-200 p-4 rounded-2xl flex gap-4 cursor-pointer font-bold my-5">{service.city}
 			<div>{service.center}</div>
 			{service.services.length > 0 && service.services.map((e)=> <div>{e}</div>)}
-			</div>
+			</Link>     
 
       ))}
-      </div>
+      </div> */}
+      <div className="px-80 py-10">
+      <table className="w-full table-auto striped">
+      <thead>
+        <tr className="bg-indigo-400 text-white">
+          <th>City</th>
+          <th>Center</th>
+          <th>Services</th>
+        </tr>
+      </thead>
+      <tbody>
+        {services.map((item) => (
+          <tr key={item.city} className="even:bg-amber-100 odd:bg-blue-100">
+            <td className="p-5">{item.city}</td>
+            <td className="p-5">{item.center}</td>
+            <td className="p-5">{item.services.map((e)=><div className=" ">{e}</div>)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    </div>
     </>
   );
 };

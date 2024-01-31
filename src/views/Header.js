@@ -13,25 +13,26 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../UserContext";
 import axios from "axios";
 
 // const pages = ['Products', 'Pricing', 'Blog'];
 const pages = [
   { page: "Home", link: "/" },
-  { page: "Sign In", link: "/signin" },
-  { page: "Sign Up", link: "/signup" },
-  { page: "Dashboard", link: "/dashboard" },
-  { page: "Book Service", link: "/slotform" },
-  { page: "Add Service Center", link: "/AddCenterForm" },
+  // { page: "Sign In", link: "/signin" },
+  // { page: "Bookings", link: "/bookings" },
+  // { page: "Sign Up", link: "/signup" },
+  // { page: "Dashboard", link: "/dashboard" },
+  // { page: "Book Service", link: "/slotform" },
+  // { page: "Add Service Center", link: "/addcenterform" },
   // 'Products', 'Pricing', 'Blog'
 ];
 const settings = [
   { page: "Profile", link: "/profile" },
   { page: "Account", link: "/account" },
   { page: "Dashboard", link: "/dashboard" },
-  { page: "Logout", link: "/" },
+  // { page: "Logout", link: "/" },
 ];
 
 function Header() {
@@ -128,9 +129,36 @@ function Header() {
               ))}
             </Menu>
           </Box>
-          <Box>
-            {user?.role}
-          </Box>
+
+
+          {user?.role &&
+            (user.role === "Service Owner" || user.role === "Admin") && (
+              <Box className="mx-5">
+                <Link to="/dashboard">My Service centers</Link>
+              </Box>
+            )}
+          {user?.role &&
+            (user.role === "Service Owner" || user.role === "Admin") && (
+              <Box className="mx-5">
+                <Link to="/addcenterform">Add Service centers</Link>
+              </Box>
+            )}
+                {user?.role &&
+            (user.role === "Service Owner" || user.role === "Admin") && (
+              <Box className="mx-5">
+                <Link to="/Bookings">Bookings</Link>
+              </Box>
+            )}
+              {user?.role &&
+            (user.role === "Client" || user.role === "Admin") && (
+              <Box className="mx-5">
+                <Link to="/slotform">Book a service</Link>
+              </Box>
+            )}
+            
+          {/* {user?.role!=="Client" &&<Box className="mx-5">
+<Link to="/addcenterform">Add Service Center</Link>
+          </Box>} */}
           <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
             variant="h5"
@@ -164,7 +192,8 @@ function Header() {
               </Button>
             ))}
           </Box>
-
+          <Box className="mx-5">{user?.role}</Box>
+          {user?.role?"":<Box><Link to='/signin'>Sign In</Link></Box>}
           {!!user && (
             <Box sx={{ flexGrow: 0 }}>
               {!!user && (

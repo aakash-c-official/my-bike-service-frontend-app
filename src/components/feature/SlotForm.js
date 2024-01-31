@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Container,
   Typography,
@@ -9,38 +9,46 @@ import {
   MenuItem,
   Button,
 } from "@mui/material";
+import {  Navigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { UserContext } from "../../UserContext";
 
-// Sample data
-const cities = [
-  { id: 1, name: "City 1" },
-  { id: 2, name: "City 2" },
-  // Add more cities as needed
-];
 
-const serviceCenters = {
-  1: [
-    { id: 1, name: "Center 1A" },
-    { id: 2, name: "Center 1B" },
-    // Add more centers for City 1
-  ],
-  2: [
-    { id: 3, name: "Center 2A" },
-    { id: 4, name: "Center 2B" },
-    // Add more centers for City 2
-  ],
-  // Add more cities with their respective centers
-};
 
 const slots = ["Morning", "Afternoon"];
 
-const services = ["Full Service", "Engine Service", "Wash"];
-
 function SlotForm() {
+  // const {id}=useParams();
+  const { ready, user,setUser } = useContext(UserContext);
+  const [name,setName]=useState("");
+  // const name=user?.name;
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedCenter, setSelectedCenter] = useState("");
   const [selectedSlot, setSelectedSlot] = useState("");
   const [selectedService, setSelectedService] = useState("");
-
+const [servicesData,setServicesData]=useState([])
+const [redirect,setRedirect]=useState(false)
+  // useEffect(()=>{
+  //   if(!id){
+  //     return;
+  //   }
+  //   axios.get(`/services/${id}`).then(response=>{
+  //     const {data}=response;
+  //     setServicesData(data)
+  //     // setSelectedCity(data.city)
+  //   })
+  // },[id]);
+  useEffect(() => {
+    axios.get("/allservicesforall").then((response) => {
+      setServicesData(response.data);
+      
+    });
+  }, []);
+  useEffect(()=>{
+    if(user){ 
+      setName(user.name  )
+    }
+  },[user])
   const handleCityChange = (event) => {
     setSelectedCity(event.target.value);
     setSelectedCenter("");
@@ -57,8 +65,39 @@ function SlotForm() {
   const handleServiceChange = (event) => {
     setSelectedService(event.target.value);
   };
+console.log(servicesData)
+// let cities=servicesData.map(e=>e.city);
+let cities=[...new Set (servicesData.map(e=>e.city))];
+let scenter=servicesData.map(e=>e.center)
+let serviceCenters=servicesData.filter(e=>e.city==selectedCity).map(e=>e.center);
+let serviceTypes=servicesData.filter(e=>e.city==selectedCity).filter(e=>e.center==selectedCenter).map(e=>e.services);
+let serviceCenterId=servicesData.filter(e=>e.city==selectedCity).filter(e=>e.center==selectedCenter)[0]?.owner;
+// console.log(serviceCenters)
+console.log(serviceCenterId);
+console.log(serviceTypes)
+console.log(servicesData) 
+// console.log(cities)
+async function  handleSubmit(){
+  try{
+     console.log(selectedCity,selectedCenter,selectedSlot,selectedService);
+  const response=  await axios.post("/booking",{serviceCenterId,selectedCity,selectedCenter,selectedSlot,selectedService,name});
+  const bookingId=response.data._id;
+  console.log(bookingId);
+  alert("Booked successfully!!")
+  setRedirect(true) 
+  }
+  catch{
+    alert("Booking failed")
+  }
 
-  return (
+
+
+}
+
+if(redirect){
+  return <Navigate to={'/'}/>
+}
+return (
     <Container>
       <Typography variant="h4" gutterBottom>
         Bike Servicing Website
@@ -75,8 +114,8 @@ function SlotForm() {
               onChange={handleCityChange}
             >
               {cities.map((city) => (
-                <MenuItem key={city.id} value={city.id}>
-                  {city.name}
+                <MenuItem key={city} value={city}>
+                  {city}
                 </MenuItem>
               ))}
             </Select>
@@ -93,9 +132,9 @@ function SlotForm() {
               onChange={handleCenterChange}
             >
               {selectedCity &&
-                serviceCenters[selectedCity].map((center) => (
-                  <MenuItem key={center.id} value={center.id}>
-                    {center.name}
+                serviceCenters.map((center) => (
+                  <MenuItem key={center} value={center}>
+                    {center}
                   </MenuItem>
                 ))}
             </Select>
@@ -129,7 +168,7 @@ function SlotForm() {
               label="Select Service Type"
               onChange={handleServiceChange}
             >
-              {services.map((service) => (
+              {serviceTypes[0]?.map((service) => (
                 <MenuItem key={service} value={service}>
                   {service}
                 </MenuItem>
@@ -142,11 +181,12 @@ function SlotForm() {
             variant="contained"
             color="primary"
             disabled={!selectedService}
-            onClick={() =>
-              alert(
-                `Selected City: ${selectedCity}, Selected Center: ${selectedCenter}, Selected Slot: ${selectedSlot}, Selected Service: ${selectedService}`
-              )
-            }
+            // onClick={() =>{
+            //   alert(
+            //     `Selected City: ${selectedCity}, Selected Center: ${selectedCenter}, Selected Slot: ${selectedSlot}, Selected Service: ${selectedService}`
+            //   );handleSubmit();}
+              onClick={()=>handleSubmit()}
+            // }
           >
             Book Service
           </Button>
