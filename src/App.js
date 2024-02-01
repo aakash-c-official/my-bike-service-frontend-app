@@ -22,11 +22,11 @@ function App() {
       <UserContextProvider>
         <Routes>
           <Route path="/" element={<LayoutOutlet />}>
-          <Route path="/landingpage" element={<LandingPage />}/>
+          <Route path="/" element={<LandingPage />}/>
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUpForm />} />
             //need to protect
-            <Route path="/" element={<Home />} />
+            {/* <Route path="/" element={<Home />} /> */}
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/bookings" element={<BookingsPage />} />
