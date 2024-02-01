@@ -24,9 +24,9 @@ const LandingPage = () => {
         <p className="primary-text">
          A bike need a service , get it done today!!!
         </p>
-        <button className="secondary-button" onClick={()=>goTo()}>
+        {/* <button className="secondary-button" onClick={()=>goTo()}> */}
         {/* <button className="secondary-button" onClick={()=>setRedirect(true)}> */}
-        {/* <button className="secondary-button" onClick={()=>(navigate('/signup'))}> */}
+        <button className="secondary-button" onClick={()=>(navigate('/signup'))}>
           Book Now <FiArrowRight />{" "}
         </button>
       </div>
